@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.App-header {
+  background-color: #fff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #0088cc;
+  margin-right: 20px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+ul li {
+  margin-left: 20px;
+}
+
+ul li a {
+  text-decoration: none;
+  color: black;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px);
+  background: #f9f9f9;
+}
