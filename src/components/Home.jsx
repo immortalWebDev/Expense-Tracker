@@ -8,6 +8,7 @@ function Home() {
   const [location, setLocation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
     // Fetch user data and pre-fill the form if needed
@@ -19,7 +20,7 @@ function Home() {
           { idToken: idToken }
         );
         const userData = response.data.users[0];
-        console.log(userData)
+        console.log(userData);
         if (userData) {
           setName(userData.displayName || "");
           setJob(userData.job || "");
@@ -62,20 +63,46 @@ function Home() {
       setName("");
       setJob("");
       setLocation("");
+      setDisplayName(name);
       setShowProfileForm(false);
       setError(null);
     } catch (error) {
       console.error("Error updating profile:", error);
-      setError("An error occurred while updating the profile. Please try again later.");
+      setError(
+        "An error occurred while updating the profile. Please try again later."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  //Verify email
+  const handleVerifyEmail = async (event) => {
+    event.preventDefault();
+    try {
+      const idToken = localStorage.getItem("token");
+      const response = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+        {
+          requestType: "VERIFY_EMAIL",
+          idToken: idToken,
+        }
+      );
+
+      console.log("Email verification link sent successfully:", response.data);
+    } catch (error) {
+      console.error("Error sending email verification link:", error);
+    }
+  };
+
   return (
     <div>
-      <h1>Welcome to the Expense Eagle!</h1>
-      <p>You have successfully logged in.</p>
+      <h1>Welcome to the Expense Eagle{displayName && `, ${displayName}`}!</h1>
+
+      <p>
+        You have successfully logged in{" "}
+        {<button onClick={handleVerifyEmail}>Verify Email</button>}
+      </p>
       {!showProfileForm && (
         <button onClick={() => setShowProfileForm(true)}>
           Complete Profile
