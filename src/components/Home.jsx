@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function Home() {
@@ -9,6 +9,31 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    // Fetch user data and pre-fill the form if needed
+    const fetchUserData = async () => {
+      try {
+        const idToken = localStorage.getItem("token");
+        const response = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+          { idToken: idToken }
+        );
+        const userData = response.data.users[0];
+        console.log(userData)
+        if (userData) {
+          setName(userData.displayName || "");
+          setJob(userData.job || "");
+          setLocation(userData.location || "");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setError("Error fetching user data. Please try again later.");
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleCreateProfile = async () => {
     // Validate the form fields
     if (!name || !job || !location) {
@@ -16,24 +41,24 @@ function Home() {
       return;
     }
 
-
     setIsLoading(true);
 
     try {
       // Post the profile details to Firebase
-      const idToken = localStorage.getItem("token"); 
-      const response = await axios.post(`https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+      const idToken = localStorage.getItem("token");
+      const response = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
         {
           idToken: idToken,
           displayName: name,
-          photoUrl: null, 
+          job: job,
+          location: location,
           returnSecureToken: true,
         }
       );
 
       console.log("Profile updated successfully:", response.data);
-      
-      
+
       setName("");
       setJob("");
       setLocation("");
@@ -41,11 +66,7 @@ function Home() {
       setError(null);
     } catch (error) {
       console.error("Error updating profile:", error);
-
-      console.log("Error response:", error.response.data);
-
-      
-      setError("An error occurred while creating the profile. Please try again later.");
+      setError("An error occurred while updating the profile. Please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +106,7 @@ function Home() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
-            {error && <p className="error-message">{error}</p>}
+            {error && <p>{error}</p>}
             <button
               type="button"
               onClick={handleCreateProfile}
