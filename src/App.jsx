@@ -11,7 +11,7 @@ function App() {
       <header className="App-header">
         <nav className="navbar">
           <div className="navbar-left">
-            <div className="logo">Expensify!</div>
+            <div className="logo">ExpenseEagle!</div>
             <ul>
               <li><a href="#home">Home</a></li>
               <li><a href="#products">Products</a></li>
