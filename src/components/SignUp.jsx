@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./SignUp.css";
 
@@ -9,6 +10,7 @@ function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate(); // React Router hook to navigate to different routes
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,11 +36,19 @@ function SignUp() {
         returnSecureToken: true,
       });
 
+      const data = response.data
+      
+      localStorage.setItem('token',data.idToken)
+      localStorage.setItem('userEmail',data.email)
+      
+
       console.log("Authentication successful:", response.data);
       setError(null);
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+      navigate("/home"); // Navigate to the Home component on successful login/signup
+
     } catch (err) {
       let errorMessage = "Authentication failed: Invalid credentials";
     //   if (err.response && err.response.data && err.response.data.error && err.response.data.error.message) {

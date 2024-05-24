@@ -43,10 +43,17 @@ ul li a {
   color: black;
 }
 
+.active {
+    text-decoration: underline ;
+    color: #0088cc 
+}
+
+
 main {
   display: flex;
   justify-content: center;
   align-items: center;
   height: calc(100vh - 60px);
-  background: black
+  background: #f6faf8
 }
+
