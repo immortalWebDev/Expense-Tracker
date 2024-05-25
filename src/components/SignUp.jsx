@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState ,useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./SignUp.css";
+import { AuthContext } from "./AuthContext";
 
 function SignUp() {
+
+    const {handleLogin} = useContext(AuthContext)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -40,6 +43,8 @@ function SignUp() {
       
       localStorage.setItem('token',data.idToken)
       localStorage.setItem('userEmail',data.email)
+
+      handleLogin()
       
 
       console.log("Authentication successful:", response.data);
@@ -47,7 +52,10 @@ function SignUp() {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      navigate("/home"); // Navigate to the Home component on successful login/signup
+       
+       navigate("/home"); // Navigate to the Home component on successful login/signup
+       
+    
 
     } catch (err) {
       let errorMessage = "Authentication failed: Invalid credentials";

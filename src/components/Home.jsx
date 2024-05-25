@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useContext} from "react";
 import axios from "axios";
+import Logout from "./Logout";
+import { AuthContext } from "./AuthContext";
 
 function Home() {
+
+  
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [name, setName] = useState("");
   const [job, setJob] = useState("");
@@ -35,6 +39,7 @@ function Home() {
     fetchUserData();
   }, []);
 
+  
   const handleCreateProfile = async () => {
     // Validate the form fields
     if (!name || !job || !location) {
@@ -97,6 +102,7 @@ function Home() {
 
   return (
     <div>
+        <Logout></Logout>
       <h1>Welcome to the Expense Eagle{displayName && `, ${displayName}`}!</h1>
 
       <p>
