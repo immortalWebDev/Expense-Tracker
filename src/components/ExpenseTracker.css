@@ -1,0 +1,119 @@
+body {
+  background-color: #f4f4f9;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.expense-tracker-container {
+  display: flex; /* Use Flexbox to create a two-column layout */
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.form-container {
+  flex: 1;
+  padding: 20px;
+}
+
+.expenses-container {
+  flex: 1;
+  padding: 20px;
+  max-height: 600px; /* Set a max height for the list */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  margin-left: 20px; /* Add margin to the left to create space */
+  border-left: 2px solid #ddd; 
+}
+
+.expense-tracker-container h2,
+.expense-tracker-container h3 {
+  text-align: center;
+  color: #333;
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 20px;
+}
+
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.expense-form input,
+.expense-form select {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.expense-form input:focus,
+.expense-form select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.expense-form button {
+  padding: 12px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.expense-form button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.expense-form button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: center;
+  margin-top: -10px;
+}
+
+.expense-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  max-height: 300px; /* Set a max height for the list */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+
+}
+
+.expense-item {
+  background-color: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.expense-item .expense-description,
+.expense-item .expense-amount,
+.expense-item .expense-category {
+  margin: 5px 0;
+}
+
+.expense-item .expense-amount {
+  font-weight: 700;
+  color: #28a745;
+}

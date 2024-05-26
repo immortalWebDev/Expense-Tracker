@@ -10,6 +10,7 @@ import "./App.css";
 import SignUp from "./components/SignUp";
 import Home from "./components/Home";
 import { AuthContext, AuthProvider } from "./components/AuthContext";
+import ExpenseTracker from "./components/ExpenseTracker";
 
 function App() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -45,6 +46,8 @@ function App() {
           />
 
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/expenses" element={<ExpenseTracker />} />
+
         </Routes>
       </main>
     </div>

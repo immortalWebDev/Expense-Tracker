@@ -1,11 +1,9 @@
-import React, { useState, useEffect ,useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Logout from "./Logout";
-import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-
-  
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [name, setName] = useState("");
   const [job, setJob] = useState("");
@@ -13,6 +11,10 @@ function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [displayName, setDisplayName] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
+
+  const navigate = useNavigate()
+
 
   useEffect(() => {
     // Fetch user data and pre-fill the form if needed
@@ -29,6 +31,8 @@ function Home() {
           setName(userData.displayName || "");
           setJob(userData.job || "");
           setLocation(userData.location || "");
+          setEmailVerified(userData.emailVerified);
+
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -39,7 +43,6 @@ function Home() {
     fetchUserData();
   }, []);
 
-  
   const handleCreateProfile = async () => {
     // Validate the form fields
     if (!name || !job || !location) {
@@ -100,20 +103,31 @@ function Home() {
     }
   };
 
+
+  const addExpenses = () => {
+    navigate('/expenses')
+  }
+
   return (
     <div>
-        <Logout></Logout>
+      <Logout></Logout>
+
       <h1>Welcome to the Expense Eagle{displayName && `, ${displayName}`}!</h1>
 
       <p>
-        You have successfully logged in{" "}
-        {<button onClick={handleVerifyEmail}>Verify Email</button>}
+        You have successfully logged in, {" "}
+        {emailVerified ? (
+          <span>and your Email is verified!</span>
+        ) : (
+          <button onClick={handleVerifyEmail}>Verify Email</button>
+        )}
       </p>
       {!showProfileForm && (
         <button onClick={() => setShowProfileForm(true)}>
           Complete Profile
         </button>
       )}
+      {<button onClick={() => addExpenses()}>Start adding expenses</button>}
       {showProfileForm && (
         <div>
           <h2>Complete Your Profile</h2>
@@ -147,6 +161,7 @@ function Home() {
             >
               {isLoading ? "Updating..." : "Update"}
             </button>
+            
           </form>
         </div>
       )}
