@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext,useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -11,10 +11,16 @@ import SignUp from "./components/SignUp";
 import Home from "./components/Home";
 import { AuthContext, AuthProvider } from "./components/AuthContext";
 import ExpenseTracker from "./components/ExpenseTracker";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated ,setIsAuthenticated} = useContext(AuthContext);
   console.log("login status", isAuthenticated);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, [setIsAuthenticated]);
 
   return (
     <div className="App">
@@ -39,16 +45,16 @@ function App() {
         </nav>
       </header>
       <main>
-        <Routes>
-          <Route
-            path="/home"
-            element={isAuthenticated ? <Home /> : <Navigate to="/signup" />}
-          />
-
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/expenses" element={<ExpenseTracker />} />
-
-        </Routes>
+        {isAuthenticated === null ? (
+          <div>Loading...</div>
+        ) : (
+          <Routes>
+            <Route path="/home" element={<PrivateRoute element={Home} />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/expenses" element={<PrivateRoute element={ExpenseTracker} />} />
+            <Route path="*" element={<Navigate to={isAuthenticated ? "/home" : "/signup"} />} />
+          </Routes>
+        )}
       </main>
     </div>
   );

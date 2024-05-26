@@ -5,14 +5,20 @@ const AuthContext = createContext();
 
 // Create a provider component
 const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     // Check if the user is authenticated based on the token in localStorage
     const token = localStorage.getItem('token');
     if (token) {
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
+
+     // Shorter syntax
+    //  const token = localStorage.getItem('token');
+    //  setIsAuthenticated(!!token);
   }, []);
 
   const handleLogin = () => {
@@ -29,7 +35,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, handleLogout,handleLogin }}>
+    <AuthContext.Provider value={{ isAuthenticated, handleLogout,handleLogin ,setIsAuthenticated}}>
       {children}
     </AuthContext.Provider>
   );

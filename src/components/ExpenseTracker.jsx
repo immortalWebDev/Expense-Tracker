@@ -2,6 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ExpenseTracker.css";
 import { AuthContext } from "./AuthContext";
+import axios from 'axios'
+
+const FIREBASE_URL = "https://expense-eagle-piyush-default-rtdb.firebaseio.com/expenses.json";
+
 
 function ExpenseTracker() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -17,22 +21,64 @@ function ExpenseTracker() {
     if (!isAuthenticated) {
       navigate("/signup"); // Redirect to login if not authenticated
     }
+    else{
+      fetchExpenses()
+    }
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = (event) => {
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await axios.get(FIREBASE_URL);
+      const data = response.data;
+      const loadedExpenses = [];
+
+      for (const key in data) {
+        loadedExpenses.push({
+          id: key,
+          amount: data[key].amount,
+          description: data[key].description,
+          category: data[key].category,
+        });
+      }
+
+      setExpenses(loadedExpenses);
+    } catch (error) {
+      console.error("Error fetching expenses:", error);
+      setError("Error fetching expenses. Please try again later.");
+    }
+  };
+  
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
 
     // Add expense to local state
     const newExpense = { amount, description, category };
-    setExpenses([...expenses, newExpense]);
+    // setExpenses([...expenses, newExpense]);
 
-    // Clear form fields
-    setAmount("");
-    setDescription("");
-    setCategory("");
-    setError(null);
-    setIsLoading(false);
+    try {
+      const response = await axios.post(FIREBASE_URL, newExpense);
+      if (response.status === 200) {
+        setExpenses((prevExpenses) => [
+          ...prevExpenses,
+          { id: response.data.name, ...newExpense },
+        ]);
+
+        // Clear form fields
+        setAmount("");
+        setDescription("");
+        setCategory("");
+        setError(null);
+        console.log("Added expense tp firebase successfully: ",response.data.name)
+      }
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      setError("An error occurred while adding the expense. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
