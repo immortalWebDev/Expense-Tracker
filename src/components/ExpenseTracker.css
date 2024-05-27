@@ -5,8 +5,8 @@ body {
 }
 
 .expense-tracker-container {
-  display: flex; /* Use Flexbox to create a two-column layout */
-  max-width: 1200px;
+  display: flex; 
+  max-width: 700px;
   margin: 50px auto;
   padding: 20px;
   background-color: #ffffff;
@@ -116,4 +116,20 @@ body {
 .expense-item .expense-amount {
   font-weight: 700;
   color: #28a745;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+
+button.edit-button {
+  color: #007bff;
+  border-color: #007bff;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+button.delete-button {
+  color: #dc3545;
+  border-color: #dc3545;
 }

@@ -2,10 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ExpenseTracker.css";
 import { AuthContext } from "./AuthContext";
-import axios from 'axios'
+import axios from 'axios';
+import Logout from "./Logout";
 
-const FIREBASE_URL = "https://expense-eagle-piyush-default-rtdb.firebaseio.com/expenses.json";
-
+const FIREBASE_URL = "https://expense-eagle-piyush-default-rtdb.firebaseio.com/expenses";
 
 function ExpenseTracker() {
   const { isAuthenticated } = useContext(AuthContext);
@@ -16,20 +16,20 @@ function ExpenseTracker() {
   const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [currentExpenseId, setCurrentExpenseId] = useState(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/signup"); // Redirect to login if not authenticated
-    }
-    else{
-      fetchExpenses()
+      navigate("/signup");
+    } else {
+      fetchExpenses();
     }
   }, [isAuthenticated, navigate]);
 
-
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(FIREBASE_URL);
+      const response = await axios.get(`${FIREBASE_URL}.json`);
       const data = response.data;
       const loadedExpenses = [];
 
@@ -48,31 +48,38 @@ function ExpenseTracker() {
       setError("Error fetching expenses. Please try again later.");
     }
   };
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // Add expense to local state
     const newExpense = { amount, description, category };
-    // setExpenses([...expenses, newExpense]);
 
     try {
-      const response = await axios.post(FIREBASE_URL, newExpense);
-      if (response.status === 200) {
-        setExpenses((prevExpenses) => [
-          ...prevExpenses,
-          { id: response.data.name, ...newExpense },
-        ]);
-
-        // Clear form fields
-        setAmount("");
-        setDescription("");
-        setCategory("");
-        setError(null);
-        console.log("Added expense tp firebase successfully: ",response.data.name)
+      if (editMode && currentExpenseId) {
+        await axios.put(`${FIREBASE_URL}/${currentExpenseId}.json`, newExpense);
+        setExpenses((prevExpenses) =>
+          prevExpenses.map((expense) =>
+            expense.id === currentExpenseId ? { id: currentExpenseId, ...newExpense } : expense
+          )
+        );
+        console.log("Expense successfully edited");
+        setEditMode(false);
+        setCurrentExpenseId(null);
+      } else {
+        const response = await axios.post(`${FIREBASE_URL}.json`, newExpense);
+        if (response.status === 200) {
+          setExpenses((prevExpenses) => [
+            ...prevExpenses,
+            { id: response.data.name, ...newExpense },
+          ]);
+        }
       }
+
+      setAmount("");
+      setDescription("");
+      setCategory("");
+      setError(null);
     } catch (error) {
       console.error("Error adding expense:", error);
       setError("An error occurred while adding the expense. Please try again later.");
@@ -81,10 +88,29 @@ function ExpenseTracker() {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${FIREBASE_URL}/${id}.json`);
+      setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
+      console.log("Expense successfully deleted");
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
+
+  const handleEdit = (expense) => {
+    setAmount(expense.amount);
+    setDescription(expense.description);
+    setCategory(expense.category);
+    setEditMode(true);
+    setCurrentExpenseId(expense.id);
+  };
+
   return (
     <div className="expense-tracker-container">
+      <Logout></Logout>
       <div className="form-container">
-        <h2>Add Daily Expenses</h2>
+        <h2>{editMode ? "Edit Expense" : "Add Daily Expenses"}</h2>
         <form className="expense-form" onSubmit={handleSubmit}>
           <input
             type="number"
@@ -109,10 +135,9 @@ function ExpenseTracker() {
             <option value="Food">Food</option>
             <option value="Petrol">Petrol</option>
             <option value="Salary">Salary</option>
-            {/* Add more options as needed */}
           </select>
           <button type="submit" disabled={isLoading}>
-            {isLoading ? "Adding..." : "Add Expense"}
+            {isLoading ? "Saving..." : editMode ? "Update Expense" : "Add Expense"}
           </button>
           {error && <p className="error-message">{error}</p>}
         </form>
@@ -123,11 +148,13 @@ function ExpenseTracker() {
           <p>No expenses added yet.</p>
         ) : (
           <ul className="expense-list">
-            {expenses.map((expense, index) => (
-              <li key={index} className="expense-item">
+            {expenses.map((expense) => (
+              <li key={expense.id} className="expense-item">
                 <p className="expense-description">{expense.description}</p>
                 <p className="expense-amount">${expense.amount}</p>
                 <p className="expense-category">{expense.category}</p>
+                <button className="edit-button" onClick={() => handleEdit(expense)}>Edit</button>
+                <button className="delete-button" onClick={() => handleDelete(expense.id)}>Delete</button>
               </li>
             ))}
           </ul>
