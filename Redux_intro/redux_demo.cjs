@@ -13,7 +13,14 @@ function counterReducer(state = initialState, action) {
     return { value: state.value - 1 };
 
     //else if action type is unknown or unhandles then return present state
-  } else {
+  } 
+  else if(action.type === "incrementby2"){
+    return {value: state.value + 2};
+  }
+  else if(action.type === "decrementby2"){
+    return {value: state.value - 2};
+  }
+    else {
     return state;
   }
 }
@@ -31,4 +38,13 @@ console.log(store.getState().value); //5
 
 //dispatch decrement action once
 store.dispatch({ type: "decrement" });
-console.log(store.getState().value);
+console.log(store.getState().value); //4
+
+
+//for action incrementby2 dispatch to store
+store.dispatch({type:"incrementby2"})
+console.log(store.getState().value)  //6
+ 
+//for action decrementby2
+store.dispatch({type:"decrementby2"})
+console.log(store.getState().value) //4
