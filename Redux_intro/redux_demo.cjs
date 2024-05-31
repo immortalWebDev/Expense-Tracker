@@ -25,26 +25,28 @@ function counterReducer(state = initialState, action) {
   }
 }
 
-//Create a redux store by passing reducer function //dont worry about deprecated warning
+// Create a redux store by passing the reducer function
 const store = createStore(counterReducer);
 
-//Now dispatching 5 times 'increment' action to store
+// Subscriber function to log the current state
+const counterSubscriber = () => {
+  const latestState = store.getState();
+  console.log(latestState);
+};
+
+// Subscribe to state changes
+store.subscribe(counterSubscriber);
+
+// Dispatching 5 times 'increment' action to store
 for (let i = 0; i < 5; i++) {
   store.dispatch({ type: "increment" });
 }
 
-//then log current value after 5 'increment'
-console.log(store.getState().value); //5
-
-//dispatch decrement action once
+// Dispatch 'decrement' action once
 store.dispatch({ type: "decrement" });
-console.log(store.getState().value); //4
 
+// Dispatch 'incrementby2' action
+store.dispatch({ type: "incrementby2" });
 
-//for action incrementby2 dispatch to store
-store.dispatch({type:"incrementby2"})
-console.log(store.getState().value)  //6
- 
-//for action decrementby2
-store.dispatch({type:"decrementby2"})
-console.log(store.getState().value) //4
+// Dispatch 'decrementby2' action
+store.dispatch({ type: "decrementby2" });
