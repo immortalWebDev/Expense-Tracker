@@ -4,7 +4,9 @@ import axios from 'axios';
 const FIREBASE_URL = "https://expense-eagle-piyush-default-rtdb.firebaseio.com/expenses";
 
 export const fetchExpenses = createAsyncThunk('expenses/fetchExpenses', async () => {
-  const response = await axios.get(`${FIREBASE_URL}.json`);
+  const userEmail = localStorage.getItem('userEmail')
+  const formattedEmail = userEmail.replace('.','')
+  const response = await axios.get(`${FIREBASE_URL}/${formattedEmail}.json`);
   const data = response.data;
   const loadedExpenses = [];
 
@@ -15,23 +17,37 @@ export const fetchExpenses = createAsyncThunk('expenses/fetchExpenses', async ()
       description: data[key].description,
       category: data[key].category,
     });
+    // const expense = data[key].newExpense || data[key]; // Access nested newExpense if it exists
+    // console.log(data[key].newExpense)
+    //   loadedExpenses.push({
+    //     id: key,
+    //     amount: expense.amount,
+    //     description: expense.description,
+    //     category: expense.category,
+    //   });
   }
 
   return loadedExpenses;
 });
 
 export const addExpense = createAsyncThunk('expenses/addExpense', async (newExpense) => {
-  const response = await axios.post(`${FIREBASE_URL}.json`, newExpense);
+  const userEmail = localStorage.getItem('userEmail')
+  const formattedEmail = userEmail.replace('.','')
+  const response = await axios.post(`${FIREBASE_URL}/${formattedEmail}.json`, newExpense);
   return { id: response.data.name, ...newExpense };
 });
 
 export const editExpense = createAsyncThunk('expenses/editExpense', async (expense) => {
-  await axios.put(`${FIREBASE_URL}/${expense.id}.json`, expense);
+  const userEmail = localStorage.getItem('userEmail')
+  const formattedEmail = userEmail.replace('.','')
+  await axios.put(`${FIREBASE_URL}/${formattedEmail}/${expense.id}.json`, expense);
   return expense;
 });
 
 export const deleteExpense = createAsyncThunk('expenses/deleteExpense', async (id) => {
-  await axios.delete(`${FIREBASE_URL}/${id}.json`);
+  const userEmail = localStorage.getItem('userEmail')
+  const formattedEmail = userEmail.replace('.','')
+  await axios.delete(`${FIREBASE_URL}/${formattedEmail}/${id}.json`);
   return id;
 });
 
