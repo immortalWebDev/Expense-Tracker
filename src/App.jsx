@@ -1,4 +1,4 @@
-import React, { useContext,useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,18 +9,20 @@ import {
 import "./App.css";
 import SignUp from "./components/SignUp";
 import Home from "./components/Home";
-import { AuthContext, AuthProvider } from "./components/AuthContext";
 import ExpenseTracker from "./components/ExpenseTracker";
 import PrivateRoute from "./components/PrivateRoute";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsAuthenticated } from "./store/authSlice";
 
 function App() {
-  const { isAuthenticated ,setIsAuthenticated} = useContext(AuthContext);
-  console.log("login status", isAuthenticated);
+
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
-  }, [setIsAuthenticated]);
+    dispatch(setIsAuthenticated(!!token));
+  }, [dispatch]);
 
   return (
     <div className="App">
@@ -62,8 +64,6 @@ function App() {
 
 export default () => (
   <Router>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <App />
   </Router>
 );
