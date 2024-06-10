@@ -1,0 +1,111 @@
+/* Modal container */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal-content {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  width: 50%;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slide-down 0.3s ease-out;
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+/* Modal title */
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 24px;
+  color: #333333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555555;
+}
+
+.modal-content input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.modal-content .error {
+  color: red;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.modal-content button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center; 
+  transition: background-color 0.3s;
+}
+
+/* Separate class for edit button */
+.edit-button {
+  display: flex;
+  justify-content: center; /* Center the button */
+  align-items: center; /* Center the button text */
+}
+
+
+
+.modal-content button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.modal-content button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+/* Animation for modal */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
