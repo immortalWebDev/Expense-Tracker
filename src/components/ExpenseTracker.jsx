@@ -1,20 +1,33 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./ExpenseTracker.css";
-import { AuthContext } from "./AuthContext";
-import axios from 'axios';
 import Logout from "./Logout";
 
-const FIREBASE_URL = "https://expense-eagle-piyush-default-rtdb.firebaseio.com/expenses";
+import {
+  fetchExpenses,
+  addExpense,
+  editExpense,
+  deleteExpense,
+} from "../store/expensesSlice";
+import {
+  selectExpenses,
+  selectTotalAmount,
+} from "../selectors/expensesSelectors";
 
-function ExpenseTracker() {
-  const { isAuthenticated } = useContext(AuthContext);
+const ExpenseTracker = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const expenses = useSelector(selectExpenses);
+  const totalAmount = useSelector(selectTotalAmount);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [expenses, setExpenses] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingExpenses, setLoadingExpenses] = useState(true); 
+
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [currentExpenseId, setCurrentExpenseId] = useState(null);
@@ -23,31 +36,12 @@ function ExpenseTracker() {
     if (!isAuthenticated) {
       navigate("/signup");
     } else {
-      fetchExpenses();
+      dispatch(fetchExpenses()).finally(() => {
+        setLoadingExpenses(false);
+      });
+      
     }
-  }, [isAuthenticated, navigate]);
-
-  const fetchExpenses = async () => {
-    try {
-      const response = await axios.get(`${FIREBASE_URL}.json`);
-      const data = response.data;
-      const loadedExpenses = [];
-
-      for (const key in data) {
-        loadedExpenses.push({
-          id: key,
-          amount: data[key].amount,
-          description: data[key].description,
-          category: data[key].category,
-        });
-      }
-
-      setExpenses(loadedExpenses);
-    } catch (error) {
-      console.error("Error fetching expenses:", error);
-      setError("Error fetching expenses. Please try again later.");
-    }
-  };
+  }, [isAuthenticated, navigate, dispatch]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,23 +51,12 @@ function ExpenseTracker() {
 
     try {
       if (editMode && currentExpenseId) {
-        await axios.put(`${FIREBASE_URL}/${currentExpenseId}.json`, newExpense);
-        setExpenses((prevExpenses) =>
-          prevExpenses.map((expense) =>
-            expense.id === currentExpenseId ? { id: currentExpenseId, ...newExpense } : expense
-          )
-        );
-        console.log("Expense successfully edited");
+        dispatch(editExpense({ id: currentExpenseId, ...newExpense }));
+
         setEditMode(false);
         setCurrentExpenseId(null);
       } else {
-        const response = await axios.post(`${FIREBASE_URL}.json`, newExpense);
-        if (response.status === 200) {
-          setExpenses((prevExpenses) => [
-            ...prevExpenses,
-            { id: response.data.name, ...newExpense },
-          ]);
-        }
+        dispatch(addExpense(newExpense));
       }
 
       setAmount("");
@@ -82,7 +65,9 @@ function ExpenseTracker() {
       setError(null);
     } catch (error) {
       console.error("Error adding expense:", error);
-      setError("An error occurred while adding the expense. Please try again later.");
+      setError(
+        "An error occurred while adding the expense. Please try again later."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -90,9 +75,7 @@ function ExpenseTracker() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${FIREBASE_URL}/${id}.json`);
-      setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id));
-      console.log("Expense successfully deleted");
+      dispatch(deleteExpense(id));
     } catch (error) {
       console.error("Error deleting expense:", error);
     }
@@ -108,9 +91,9 @@ function ExpenseTracker() {
 
   return (
     <div className="expense-tracker-container">
-      <Logout></Logout>
+      <Logout />
       <div className="form-container">
-        <h2>{editMode ? "Edit Expense" : "Add Daily Expenses"}</h2>
+        <h2>{editMode ? "Edit Expense" : "Add Your Expense"}</h2>
         <form className="expense-form" onSubmit={handleSubmit}>
           <input
             type="number"
@@ -135,16 +118,39 @@ function ExpenseTracker() {
             <option value="Food">Food</option>
             <option value="Petrol">Petrol</option>
             <option value="Salary">Salary</option>
+            <option value="Rent">Rent</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Other">Other</option>
           </select>
           <button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : editMode ? "Update Expense" : "Add Expense"}
+            {isLoading
+              ? "Saving..."
+              : editMode
+              ? "Update Expense"
+              : "Add Expense"}
           </button>
           {error && <p className="error-message">{error}</p>}
         </form>
+        {totalAmount >= 10000 && (
+          <div className="premium-info">
+            <p>
+              Try our premium feature and get extra perks. Download the PDF of
+              your expenses free!
+            </p>
+            <button className="premium-button">Go Premium</button>
+          </div>
+        )}
+        <div className="footer">
+          <p>Copyrights @ExpenseEagle!</p>
+          <p>By Piyush Badgujar</p>
+        </div>
       </div>
       <div className="expenses-container">
-        <h3>Expenses</h3>
-        {expenses.length === 0 ? (
+        <h3>All Expenses</h3>
+        <p className="total-amount">Total Amount: ${totalAmount}</p>
+        {loadingExpenses ? (
+          <p>Fetching expenses...</p>
+        ) : expenses.length === 0 ? (
           <p>No expenses added yet.</p>
         ) : (
           <ul className="expense-list">
@@ -153,15 +159,32 @@ function ExpenseTracker() {
                 <p className="expense-description">{expense.description}</p>
                 <p className="expense-amount">${expense.amount}</p>
                 <p className="expense-category">{expense.category}</p>
-                <button className="edit-button" onClick={() => handleEdit(expense)}>Edit</button>
-                <button className="delete-button" onClick={() => handleDelete(expense.id)}>Delete</button>
+                <div className="button-container">
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEdit(expense)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(expense.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
         )}
+        {totalAmount >= 10000 && (
+          <div className="download-pdf-button">
+            <button className="pdf">Download PDF</button>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default ExpenseTracker;
