@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // Importing the plugin
+import { useTheme } from '../store/ThemeContext';
+
+
 import "./ExpenseTracker.css";
 import Logout from "./Logout";
 
@@ -16,6 +21,8 @@ import {
 } from "../selectors/expensesSelectors";
 
 const ExpenseTracker = () => {
+  const { theme } = useTheme();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const expenses = useSelector(selectExpenses);
@@ -89,8 +96,60 @@ const ExpenseTracker = () => {
     setCurrentExpenseId(expense.id);
   };
 
+
+  const handleDownloadPDF = async () => {
+    const doc = new jsPDF();
+
+    const expenseData = expenses.map((expense, index) => {
+      return [
+        index + 1,
+        expense.description,
+        expense.category,
+        expense.amount,
+      ];
+    });
+    // expenseData.push(['', '', 'Total:', totalAmount]);
+    // Add total amount row
+    expenseData.push([
+      '',
+      '', 
+      { content: 'Total:', styles: { fontStyle: 'bold', fontSize: 14 } }, 
+      { content: totalAmount, styles: { fontStyle: 'bold', fontSize: 14 } }
+  ]);
+
+
+    const headers = [["#", "Description", "Category","Amount"]];
+
+    const content = {
+      startY: 20,
+      head: headers,
+      body: expenseData,
+    };
+
+    doc.text("Expense Report", 14, 15);
+    doc.autoTable(content);
+
+    // Convert the PDF to Blob
+    const pdfBlob = doc.output("blob");
+
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(pdfBlob);
+    link.download = "expense-report.pdf";
+
+    // Append the link to the body
+    document.body.appendChild(link);
+
+    // Programmatically trigger the click event
+    link.click();
+
+    // Remove the link from the document
+    document.body.removeChild(link);
+  };
+
+
   return (
-    <div className="expense-tracker-container">
+    <div className={`expense-tracker-container ${theme}`}>
       <Logout />
       <div className="form-container">
         <h2>{editMode ? "Edit Expense" : "Add Your Expense"}</h2>
@@ -132,7 +191,7 @@ const ExpenseTracker = () => {
           {error && <p className="error-message">{error}</p>}
         </form>
         {totalAmount >= 10000 && (
-          <div className="premium-info">
+          <div className={`premium-info ${theme}`}>
             <p>
               Try our premium feature and get extra perks. Download the PDF of
               your expenses free!
@@ -140,14 +199,14 @@ const ExpenseTracker = () => {
             <button className="premium-button">Go Premium</button>
           </div>
         )}
-        <div className="footer">
+        <div className={`footer ${theme}`}>
           <p>Copyrights @ExpenseEagle!</p>
           <p>By Piyush Badgujar</p>
         </div>
       </div>
-      <div className="expenses-container">
+      <div className={`expenses-container ${theme}`}>
         <h3>All Expenses</h3>
-        <p className="total-amount">Total Amount: ${totalAmount}</p>
+        <p>Total Amount: ${totalAmount}</p>
         {loadingExpenses ? (
           <p>Fetching expenses...</p>
         ) : expenses.length === 0 ? (
@@ -155,10 +214,10 @@ const ExpenseTracker = () => {
         ) : (
           <ul className="expense-list">
             {expenses.map((expense) => (
-              <li key={expense.id} className="expense-item">
-                <p className="expense-description">{expense.description}</p>
-                <p className="expense-amount">${expense.amount}</p>
-                <p className="expense-category">{expense.category}</p>
+              <li key={expense.id} className={`expense-item ${theme}`}>
+                <p className={`expense-description ${theme}`}>{expense.description}</p>
+                <p className={`expense-amount ${theme}`}>${expense.amount}</p>
+                <p className={`expense-category ${theme}`}>{expense.category}</p>
                 <div className="button-container">
                   <button
                     className="edit-button"
@@ -179,7 +238,7 @@ const ExpenseTracker = () => {
         )}
         {totalAmount >= 10000 && (
           <div className="download-pdf-button">
-            <button className="pdf">Download PDF</button>
+            <button className="pdf" onClick={handleDownloadPDF}>Download PDF</button>
           </div>
         )}
       </div>
