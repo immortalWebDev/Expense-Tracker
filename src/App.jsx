@@ -13,11 +13,19 @@ import ExpenseTracker from "./components/ExpenseTracker";
 import PrivateRoute from "./components/PrivateRoute";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsAuthenticated } from "./store/authSlice";
+import { ThemeProvider,useTheme } from "./store/ThemeContext";
+import ThemeToggle from "./components/ThemeToggle";
+
+
 
 function App() {
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const { theme } = useTheme();
+  const totalAmount = useSelector(state => state.expenses.totalAmount);
+
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -25,8 +33,8 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className={`App ${theme}`}>
+      <header className={`App-header ${theme}`}>
         <nav className="navbar">
           <div className="navbar-left">
             <div className="logo">ExpenseEagle!</div>
@@ -42,11 +50,18 @@ function App() {
               <li>
                 <a href="#about">About Us</a>
               </li>
+              <li>
+              {totalAmount >= 10000 && (
+                <ul>
+                  <ThemeToggle /> 
+                </ul>
+              )}
+              </li>
             </ul>
           </div>
         </nav>
       </header>
-      <main>
+      <main className={theme}>
         {isAuthenticated === null ? (
           <div>Loading...</div>
         ) : (
@@ -63,7 +78,11 @@ function App() {
 }
 
 export default () => (
+  <ThemeProvider>
+
   <Router>
     <App />
   </Router>
+  </ThemeProvider>
+
 );

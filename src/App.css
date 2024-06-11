@@ -1,12 +1,24 @@
+
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
 }
 
 .App-header {
-  background-color: #fff;
   padding: 10px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.App-header.light {
+  background-color: hwb(200 96% 15%);
+  color: #000;
+}
+
+.App-header.dark {
+  background-color: #333;
+  color: #fff;
 }
 
 .navbar {
@@ -40,20 +52,45 @@ ul li {
 
 ul li a {
   text-decoration: none;
-  color: black;
+  color: inherit;
 }
 
 .active {
-    text-decoration: underline ;
-    color: #0088cc 
+  text-decoration: underline;
+  color: #0088cc;
 }
-
 
 main {
   display: flex;
   justify-content: center;
   align-items: center;
   height: calc(100vh - 60px);
-  background: #f6faf8
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+main.light {
+  background-color: hwb(150 96% 8%);
+  color: #000;
+}
+
+main.dark {
+  background-color: #2c2c2c;
+  color: #fff;
+}
+
+.theme-toggle-button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+
+
+/* App.css */
+#root.light {
+  background-color: hwb(150 96% 8%);
+}
+
+#root.dark {
+  background-color: #2c2c2c;
+}
