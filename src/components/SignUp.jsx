@@ -1,23 +1,29 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate,useLocation } from "react-router-dom";
 import axios from "axios";
+import { login } from "../store/authSlice";
+import { useTheme } from "../store/ThemeContext";
 import "./SignUp.css";
-import { AuthContext } from "./AuthContext";
 
-function SignUp() {
-  const { handleLogin } = useContext(AuthContext);
-  const navigate = useNavigate(); // React Router hook to navigate to different routes
+const SignUp = () => {
+
+  const {theme} = useTheme()
+  const location = useLocation();
+  const message = location.state?.message
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     if (!isLogin && password !== confirmPassword) {
       setError("Passwords do not match");
@@ -42,31 +48,24 @@ function SignUp() {
 
       const data = response.data;
 
-      localStorage.setItem("token", data.idToken);
-      localStorage.setItem("userEmail", data.email);
+      // Dispatch login action with user's email
+      dispatch(login({ email: data.email, token: data.idToken }));
 
-      handleLogin();
-
-      console.log("Authentication successful:", response.data);
       setError(null);
       setEmail("");
       setPassword("");
       setConfirmPassword("");
 
-      navigate("/home"); // Navigate to the Home component on successful login/signup
+      navigate("/home");
     } catch (err) {
-      let errorMessage = "Authentication failed: Invalid credentials";
-      //   if (err.response && err.response.data && err.response.data.error && err.response.data.error.message) {
-      //     errorMessage = err.response.data.error.message;
-      //   }
-      setError(errorMessage);
+      setError("Authentication failed: Invalid credentials");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleForgotPassword = async () => {
-    setForgotPasswordLoading(true)
+    setForgotPasswordLoading(true);
     try {
       await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
@@ -75,13 +74,11 @@ function SignUp() {
           email: email,
         }
       );
-      console.log("Password reset email sent successfully!");
-      setError('Password reset email sent successfully!');
+      setError("Password reset email sent successfully!");
     } catch (error) {
-      console.error("Error sending password reset email:", error);
       setError("Error sending password reset email. Please enter valid email.");
     } finally {
-      setForgotPasswordLoading(false)
+      setForgotPasswordLoading(false);
     }
   };
 
@@ -91,7 +88,8 @@ function SignUp() {
   };
 
   return (
-    <section className="signup-container">
+    <div>
+    <div className={`signup-container ${theme}`}>
       <form className="signup-form" onSubmit={handleSubmit}>
         <h2>{isLogin ? "Login" : "Sign Up"}</h2>
         <input
@@ -119,28 +117,30 @@ function SignUp() {
         )}
         {error && <p className="error-message">{error}</p>}
         <button type="submit" disabled={isLoading}>
-          {isLoading ? "Logging in..." : isLogin ? "Log in" : "Sign up"}
+          {isLoading ? "Loading..." : isLogin ? "Log in" : "Sign up"}
         </button>
         {isLogin && (
           <button
             type="button"
             onClick={handleForgotPassword}
-            disabled={isLoading}
+            disabled={forgotPasswordLoading}
           >
             {forgotPasswordLoading ? "Sending link..." : "Forgot Password?"}
           </button>
         )}
-
         <div className="login-link">
-          {isLogin ? "Don't have an account ?" : "Already have an account ?"}
+          {isLogin ? "Don't have an account?" : "Already have an account?"}
           <button type="button" className="small-button" onClick={toggleLogin}>
             {isLogin ? "Create a new account" : "Log in with existing account"}
           </button>
         </div>
-       
       </form>
-    </section>
+    </div>
+    <div>
+    {message && <p>{message}</p>}
+    </div>
+    </div>
   );
-}
+};
 
 export default SignUp;
