@@ -4,10 +4,13 @@ import Logout from "./Logout";
 import { useNavigate } from "react-router-dom";
 import ViewProfileModal from "./ViewProfileModal";
 import EditProfileModal from "./EditProfileModal";
+import { useTheme } from "../store/ThemeContext";
 import './Home.css'
 
 
 function Home() {
+
+  const {theme} = useTheme()
 
   const [showViewProfileModal, setShowViewProfileModal] = useState(false);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -18,7 +21,7 @@ function Home() {
   const [error, setError] = useState(null);
   const [emailVerified, setEmailVerified] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
-  const [logoutMessage, setLogoutMessage] = useState(null); 
+  // const [logoutMessage, setLogoutMessage] = useState(null); 
 
   const navigate = useNavigate()
 
@@ -46,21 +49,12 @@ useEffect(() => {
       try {
         let idToken = localStorage.getItem("token");
 
-         // Check if the token is expired
-         if (isTokenExpired(idToken)) {
-          idToken = await refreshIdToken();
-          if (!idToken) {
-            handleLogout();
-            return;
-          }
-        }
-
         const response = await axios.post(
           `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
           { idToken: idToken }
         );
         const userData = response.data.users[0];
-        console.log(userData);
+        // console.log(userData);
         localStorage.setItem('userName',userData.displayName)
 
         if (userData) {
@@ -84,7 +78,8 @@ useEffect(() => {
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (error.response && error.response.status === 400) {
-          handleLogout();
+          console.log("log out")
+          // handleLogout();
         } else {
           setError("Error fetching user data. Please try again later.");
         }
@@ -95,50 +90,6 @@ useEffect(() => {
     fetchUserData();
   }, []);
 
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userName");
-    console.log("Unfortunately, your session has expired. Please login again!")
-    navigate("/signup", { state: { message: "Unfortunately, your session has expired. Please login again!" } });
-  };
-
-  const isTokenExpired = (token) => {
-    if (!token) return true;
-    const [, payload] = token.split('.');
-    const { exp } = JSON.parse(atob(payload));
-    return Date.now() >= exp * 1000;
-  };
-
-
-  const refreshIdToken = async () => {
-    try {
-      let refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) {
-        handleLogout();
-        return null;
-      }
-
-      const response = await axios.post(
-        `https://securetoken.googleapis.com/v1/token?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
-        {
-          grant_type: "refresh_token",
-          refresh_token: refreshToken,
-        }
-      );
-
-      const { id_token, refresh_token } = response.data;
-      localStorage.setItem("token", id_token);
-      localStorage.setItem("refreshToken", refresh_token);
-      return id_token;
-    } catch (error) {
-      console.error("Error refreshing ID token:", error);
-      handleLogout();
-      return null;
-    }
-  };
 
   const handleCreateProfile = async () => {
     // Validate the form fields
@@ -227,9 +178,9 @@ useEffect(() => {
         </button>
         <Logout />
       </div>
-
+      <div className={`home-text ${theme}`}>
       <h1>Welcome to the Expense Eagle, {localStorage.getItem('userName') === 'undefined' ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
-      {logoutMessage && <p>{logoutMessage}</p>}
+      <p>Refresh page if profile changes are not reflecting on UI</p>
 
       
       {<p>Logged in as: {localStorage
@@ -267,6 +218,7 @@ useEffect(() => {
         isLoading={isLoading}
         error={error}
       />
+    </div>
     </div>
   );
 }
