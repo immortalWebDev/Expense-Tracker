@@ -1,0 +1,83 @@
+.profile-button {
+  position: absolute;
+  top: 10px;
+  right: 120px;
+  padding: 10px 10px;
+  background-color: #2693db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.profile-button:hover {
+  background-color: #0084b8;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #333333;
+  margin-top: 20px;
+}
+
+p {
+  text-align: center;
+  color: #666666;
+  font-size: 16px;
+}
+
+.add-expenses {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.add-expenses:hover {
+  background-color: #218838;
+}
+
+button {
+  transition: background-color 0.3s;
+}
+
+.verify-email-button {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #ffc107;
+  color: black;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.verify-email-button:hover {
+  background-color: #e0a800;
+}
+
+
+
+.home-text.light h1,
+.home-text.light p{
+  color: #333;
+}
+
+.home-text.dark h1,
+.home-text.dark p{
+  
+  color: #fff;
+  
+}
