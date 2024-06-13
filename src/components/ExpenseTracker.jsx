@@ -140,7 +140,7 @@ const ExpenseTracker = () => {
     // Append the link to the body
     document.body.appendChild(link);
 
-    // Programmatically trigger the click event
+    //Trigger the click method upon link
     link.click();
 
     // Remove the link from the document
