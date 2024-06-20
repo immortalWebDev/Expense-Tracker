@@ -1,19 +1,32 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent ,waitFor} from '@testing-library/react';
+// import userEvent from '@testing-library/user-event';
 import Home from './Home';
 import { ThemeProvider } from '../store/ThemeContext';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
-import { expect } from 'vitest';
+import { expect,vi } from 'vitest';
+import axios from 'axios';
+
+
+// vi.mock('axios');
+// const mockAxios = vi.fn();
+// axios.post = mockAxios;
+// axios.get = mockAxios;
+// axios.put = mockAxios
+
+vi.mock('axios');
+const mockAxios = axios;
+
 
 const renderWithProviders = (ui) => {
   return render(
     <Provider store={store}>
     <BrowserRouter>
       <ThemeProvider>
-        <Home></Home>
+        {/* <Home></Home> */}
+        {ui}
       </ThemeProvider>
     </BrowserRouter>
   </Provider>
@@ -39,8 +52,87 @@ beforeEach(() => {
     if (modalRoot) {
       document.body.removeChild(modalRoot);
     }
+
+    localStorage.clear();
+    vi.resetAllMocks();
   });
 
+ //Testing async code
+  test('displays user name after fetching data', async () => {
+    // Mocking the axios GET request for fetching user data
+    mockAxios.mockResolvedValueOnce({
+      data: {
+        users: [
+          { displayName: 'Test User', emailVerified: true, localId: '12345' }
+        ]
+      }
+    });
+
+    // Render the Home component with necessary providers
+    renderWithProviders(<Home />);
+
+    // Wait for the component to render and handle async operations
+    // await waitFor(() => {
+      // Expect the user's name to be displayed
+      expect(await screen.findByText(/Welcome to the Expense Eagle, Test User!/i)).toBeInTheDocument();
+    // });
+  });
+
+  
+
+  test('displays email verification button if email is not verified', async () => {
+    mockAxios.post.mockResolvedValueOnce({
+      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
+    });
+
+    renderWithProviders(<Home />);
+
+    // await waitFor(() => {
+      expect(await screen.findByText(/Verify Email/i)).toBeInTheDocument();
+    // });
+  });
+
+
+  
+  test('displays email verification success message after sending verification email', async () => {
+    mockAxios.post.mockResolvedValueOnce({
+      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
+    });
+
+    mockAxios.post.mockResolvedValueOnce({ data: {} });
+
+    renderWithProviders(<Home />);
+
+    await waitFor(() => {
+      const verifyButton = screen.getByText(/Verify Email/i);
+      fireEvent.click(verifyButton);
+    });
+
+    await waitFor(() => {
+        expect(screen.getByText(/Check your inbox/i)).toBeInTheDocument();
+    })
+    
+  });
+
+
+  test('displays "Check your inbox" after sending email verification', async () => {
+    mockAxios.post.mockResolvedValueOnce({
+      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
+    });
+
+    mockAxios.post.mockResolvedValueOnce({ data: {} });
+
+    renderWithProviders(<Home />);
+
+    fireEvent.click(screen.getByRole('button', { name: /Verify Email/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Check your inbox/i)).toBeInTheDocument();
+    })
+})
+
+
+ //Testing sync code
   test('renders the Home component', () => {
     renderWithProviders(<Home />);
     expect(screen.getByText(/Welcome to the Expense Eagle/i)).toBeInTheDocument();
@@ -103,6 +195,5 @@ beforeEach(() => {
     expect(screen.getByText(/job/i)).toBeInTheDocument();
     expect(screen.getByText(/location/i)).toBeInTheDocument();
   });
-
 
 });
