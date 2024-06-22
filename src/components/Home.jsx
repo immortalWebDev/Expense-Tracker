@@ -6,9 +6,13 @@ import ViewProfileModal from "./ViewProfileModal";
 import EditProfileModal from "./EditProfileModal";
 import { useTheme } from "../store/ThemeContext";
 import './Home.css'
+import { useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 
 
 function Home() {
+
+  const dispatch = useDispatch()
 
   const {theme} = useTheme()
 
@@ -43,18 +47,64 @@ useEffect(() => {
 }, [showEditProfileModal, showViewProfileModal]);
 
 
+
+const getFreshToken = async () => {
+  const refreshToken = localStorage.getItem('refreshToken');
+
+  if (!refreshToken) {
+    throw new Error('No refresh token found');
+  }
+
+  const response = await axios.post(
+    `https://securetoken.googleapis.com/v1/token?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+    {
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    }
+  );
+
+  const newIdToken = response.data.id_token;
+  const newRefreshToken = response.data.refresh_token;
+  const expiresIn = response.data.expires_in;
+
+  localStorage.setItem('token', newIdToken);
+  console.log('set new token')
+  localStorage.setItem('refreshToken', newRefreshToken);
+  localStorage.setItem('tokenExpiry', Date.now() + expiresIn * 1000);
+
+  return newIdToken;
+};
+
+const getToken = async () => {
+  const token = localStorage.getItem('token');
+  const tokenExpiry = localStorage.getItem('tokenExpiry');
+
+  if (token && Date.now() < tokenExpiry) {
+    return token;
+  } else {
+    return await getFreshToken();
+  }
+};
+
+
+
+
   useEffect(() => {
     // Fetch user data and pre-fill the form if needed
     const fetchUserData = async () => {
       try {
-        let idToken = localStorage.getItem("token");
+        // let idToken = localStorage.getItem("token");
 
+        const idToken = await getToken();
+
+        
         const response = await axios.post(
           `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
           { idToken: idToken }
         );
         const userData = response.data.users[0];
         // console.log(userData);
+        
         localStorage.setItem('userName',userData.displayName)
 
         if (userData) {
@@ -78,8 +128,8 @@ useEffect(() => {
       } catch (error) {
         console.error("Error fetching user data:", error);
         if (error.response && error.response.status === 400) {
-          console.log("log out")
-          // handleLogout();
+          console.log("Session expired login again")
+          // dispatch(logout())
         } else {
           setError("Error fetching user data. Please try again later.");
         }
@@ -102,7 +152,8 @@ useEffect(() => {
 
     try {
       // Post the profile details to Firebase
-      const idToken = localStorage.getItem("token");
+      // const idToken = localStorage.getItem("token");
+      const idToken = await getToken();
       const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
         {
@@ -127,9 +178,18 @@ useEffect(() => {
 
       console.log("Profile updated successfully:", response.data);
 
-      setName("");
-      setJob("");
-      setLocation("");
+       // Update local state with new profile details
+    setName(name);
+    setJob(job);
+    setLocation(location);
+
+    //to view on home
+    localStorage.setItem('userName', name);
+
+    
+      // setName("");
+      // setJob("");
+      // setLocation("");
       setShowEditProfileModal(false);
       setShowViewProfileModal(false);  
       setError(null);
@@ -148,7 +208,9 @@ useEffect(() => {
     
     event.preventDefault();
     try {
-      const idToken = localStorage.getItem("token");
+      const idToken = await getToken();
+
+      // const idToken = localStorage.getItem("token");
       const response = await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
         {

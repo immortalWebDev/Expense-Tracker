@@ -9,8 +9,8 @@ import "./SignUp.css";
 const SignUp = () => {
 
   const {theme} = useTheme()
-  const location = useLocation();
-  const message = location.state?.message
+  // const location = useLocation();
+  // const message = location.state?.message
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,9 +47,16 @@ const SignUp = () => {
       });
 
       const data = response.data;
+      
+      
+      console.log(data)
 
       // Dispatch login action with user's email
       dispatch(login({ email: data.email, token: data.idToken }));
+
+
+    localStorage.setItem('refreshToken', data.refreshToken); // Store refresh token
+    localStorage.setItem('tokenExpiry', Date.now() + data.expiresIn * 1000);
 
       setError(null);
       setEmail("");
@@ -137,7 +144,7 @@ const SignUp = () => {
       </form>
     </div>
     <div>
-    {message && <p>{message}</p>}
+    {/* {message && <p>{message}</p>} */}
     </div>
     </div>
   );
