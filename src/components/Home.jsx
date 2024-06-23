@@ -25,8 +25,9 @@ function Home() {
   const [error, setError] = useState(null);
   const [emailVerified, setEmailVerified] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
-  // const [logoutMessage, setLogoutMessage] = useState(null); 
+  const [loadingEmailVerification, setLoadingEmailVerification] = useState(true);
 
+  
   const navigate = useNavigate()
 
 useEffect(() => {
@@ -103,7 +104,7 @@ const getToken = async () => {
           { idToken: idToken }
         );
         const userData = response.data.users[0];
-        // console.log(userData);
+        console.log('Fetched userdata from server',userData);
         
         localStorage.setItem('userName',userData.displayName)
 
@@ -118,7 +119,10 @@ const getToken = async () => {
          const profileResponse = await axios.get(
            `https://expense-eagle-piyush-default-rtdb.firebaseio.com/users/${formattedEmail}/${userId}.json`
          );
+
+        //  console.log(profileResponse)
          const userProfile = profileResponse.data;
+        //  console.log(userProfile)
         
          if (userProfile) {
            setJob(userProfile.job || "");
@@ -129,11 +133,13 @@ const getToken = async () => {
         console.error("Error fetching user data:", error);
         if (error.response && error.response.status === 400) {
           console.log("Session expired login again")
-          // dispatch(logout())
+          dispatch(logout())
         } else {
           setError("Error fetching user data. Please try again later.");
         }
-        setError("Error fetching user data. Please try again later.");
+        
+      }finally{
+        setLoadingEmailVerification(false)
       }
     };
 
@@ -248,13 +254,17 @@ const getToken = async () => {
       {<p>Logged in as: {localStorage
       .getItem('userEmail')}</p>}
       <p>
-        You have successfully logged in, {" "}
-        {emailVerified ? (
-          <span>and your Email is verified!</span>
-        ) : (
-          <button className="verify-email-button" onClick={handleVerifyEmail} disabled={verificationSent}>{verificationSent ? "Check your inbox" : "Verify Email"}</button>
-        )}
-      </p>
+          You have successfully logged in,{" "}
+          {loadingEmailVerification ? (
+            <span>Loading...</span>
+          ) : emailVerified ? (
+            <span>and your Email is verified!</span>
+          ) : (
+            <button className="verify-email-button" onClick={handleVerifyEmail} disabled={verificationSent}>
+              {verificationSent ? "Check your inbox" : "Verify Email"}
+            </button>
+          )}
+        </p>
       <button className="add-expenses" onClick={() => addExpenses()}>Start adding expenses</button>
 
       <ViewProfileModal
