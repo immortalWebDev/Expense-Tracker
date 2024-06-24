@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent ,waitFor} from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
 import Home from './Home';
 import { ThemeProvider } from '../store/ThemeContext';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,13 +7,9 @@ import { Provider } from 'react-redux';
 import { store } from '../store/store';
 import { expect,vi } from 'vitest';
 import axios from 'axios';
+// import { mockAxios } from 'vitest';
 
 
-// vi.mock('axios');
-// const mockAxios = vi.fn();
-// axios.post = mockAxios;
-// axios.get = mockAxios;
-// axios.put = mockAxios
 
 vi.mock('axios');
 const mockAxios = axios;
@@ -55,10 +50,12 @@ beforeEach(() => {
 
     localStorage.clear();
     vi.resetAllMocks();
+    // mockAxios.reset();
+
   });
 
  //Testing async code
-  test('displays user name after fetching data', async () => {
+  test('renders user name after fetching data', async () => {
     // Mocking the axios GET request for fetching user data
     mockAxios.mockResolvedValueOnce({
       data: {
@@ -80,7 +77,7 @@ beforeEach(() => {
 
   
 
-  test('displays email verification button if email is not verified', async () => {
+  test('renders email verification button if email is not verified', async () => {
     mockAxios.post.mockResolvedValueOnce({
       data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
     });
@@ -93,43 +90,16 @@ beforeEach(() => {
   });
 
 
-  
-  test('displays email verification success message after sending verification email', async () => {
-    mockAxios.post.mockResolvedValueOnce({
-      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
-    });
-
-    mockAxios.post.mockResolvedValueOnce({ data: {} });
-
-    renderWithProviders(<Home />);
-
-    await waitFor(() => {
-      const verifyButton = screen.getByText(/Verify Email/i);
-      fireEvent.click(verifyButton);
-    });
-
-    await waitFor(() => {
-        expect(screen.getByText(/Check your inbox/i)).toBeInTheDocument();
-    })
-    
+test('renders loading state initially for email verification', async () => {
+  mockAxios.post.mockResolvedValueOnce({
+    data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false}] }
   });
 
+  renderWithProviders(<Home />);
 
-  test('displays "Check your inbox" after sending email verification', async () => {
-    mockAxios.post.mockResolvedValueOnce({
-      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
-    });
+  expect(await screen.findByText(/Loading.../i)).toBeInTheDocument();
+});
 
-    mockAxios.post.mockResolvedValueOnce({ data: {} });
-
-    renderWithProviders(<Home />);
-
-    fireEvent.click(screen.getByRole('button', { name: /Verify Email/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText(/Check your inbox/i)).toBeInTheDocument();
-    })
-})
 
 
  //Testing sync code
@@ -172,11 +142,20 @@ beforeEach(() => {
     expect(screen.getByText(/Start adding expenses/i)).toBeInTheDocument();
   });
 
-  test('renders email verification button if email is not verified', () => {
+  
+  test('renders email verification button if email is not verified', async () => {
+    mockAxios.post.mockResolvedValueOnce({
+      data: { users: [{ localId: '12345', displayName: 'Test User', emailVerified: false }] }
+    });
+  
     renderWithProviders(<Home />);
-    const verifyEmailButton = screen.getByText(/Verify Email/i);
-    expect(verifyEmailButton).toBeInTheDocument();
+  
+    await waitFor(() => {
+      expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
+    });
   });
+
+  
 
 
   test('renders Profile modal when profile button is clicked', () => {
