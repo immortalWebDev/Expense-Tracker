@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback,useMemo } from "react";
 import axios from "axios";
 import Logout from "./Logout";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useTheme } from "../store/ThemeContext";
 import './Home.css'
 import { useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+// import { selectTotalAmount } from "../selectors/expensesSelectors";
 
 
 function Home() {
@@ -26,6 +27,8 @@ function Home() {
   const [emailVerified, setEmailVerified] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
   const [loadingEmailVerification, setLoadingEmailVerification] = useState(true);
+
+  // const totalAmount = useSelector(state => state.expenses.totalAmount);
 
   
   const navigate = useNavigate()
@@ -69,7 +72,7 @@ const getFreshToken = async () => {
   const expiresIn = response.data.expires_in;
 
   localStorage.setItem('token', newIdToken);
-  console.log('set new token')
+  console.log('Fetched new token from firebase as old token expired in 1 hour')
   localStorage.setItem('refreshToken', newRefreshToken);
   localStorage.setItem('tokenExpiry', Date.now() + expiresIn * 1000);
 
@@ -87,12 +90,14 @@ const getToken = async () => {
   }
 };
 
+// Memoize the formatted email
+const userEmail = localStorage.getItem('userEmail')
+const formattedEmail = useMemo(() => {
+  return userEmail.replaceAll('.', '')
+}, [userEmail]);
 
-
-
-  useEffect(() => {
     // Fetch user data and pre-fill the form if needed
-    const fetchUserData = async () => {
+    const fetchUserData = useCallback(async () => {
       try {
         // let idToken = localStorage.getItem("token");
 
@@ -104,18 +109,18 @@ const getToken = async () => {
           { idToken: idToken }
         );
         const userData = response.data.users[0];
-        console.log('Fetched userdata from server',userData);
+        console.log('Fetched user profile data from server',userData);
         
         localStorage.setItem('userName',userData.displayName)
 
         if (userData) {
-          setName(userData.displayName || "");
+          setName(userData.displayName || "NA");
           setEmailVerified(userData.emailVerified);
 
          // Fetch additional user profile details from Realtime Database
          const userId = userData.localId;
-         const userEmail = localStorage.getItem('userEmail')
-         const formattedEmail = userEmail.replaceAll('.','')
+        //  const userEmail = localStorage.getItem('userEmail')
+        //  const formattedEmail = userEmail.replaceAll('.','')
          const profileResponse = await axios.get(
            `https://expense-eagle-piyush-default-rtdb.firebaseio.com/users/${formattedEmail}/${userId}.json`
          );
@@ -125,8 +130,8 @@ const getToken = async () => {
         //  console.log(userProfile)
         
          if (userProfile) {
-           setJob(userProfile.job || "");
-           setLocation(userProfile.location || "");
+           setJob(userProfile.job || "NA");
+           setLocation(userProfile.location || "NA");
          }
         }
       } catch (error) {
@@ -141,11 +146,12 @@ const getToken = async () => {
       }finally{
         setLoadingEmailVerification(false)
       }
-    };
+    },[dispatch])
 
-    fetchUserData();
-  }, []);
-
+    useEffect(() => {
+      fetchUserData();
+    },[fetchUserData])
+    
 
   const handleCreateProfile = async () => {
     // Validate the form fields
@@ -172,8 +178,8 @@ const getToken = async () => {
 
       // Store additional fields in Realtime Database
       const userId = response.data.localId;
-      const userEmail = localStorage.getItem('userEmail')
-      const formattedEmail = userEmail.replaceAll('.','')
+      // const userEmail = localStorage.getItem('userEmail')
+      // const formattedEmail = userEmail.replaceAll('.','')
       await axios.put(
         `https://expense-eagle-piyush-default-rtdb.firebaseio.com/users/${formattedEmail}/${userId}.json`,
         {
@@ -210,7 +216,7 @@ const getToken = async () => {
   };
 
   // Verify email
-  const handleVerifyEmail = async (event) => {
+  const handleVerifyEmail = useCallback(async (event) => {
     
     event.preventDefault();
     try {
@@ -232,11 +238,12 @@ const getToken = async () => {
       console.error("Error sending email verification link:", error);
       setVerificationSent(false); 
     }
-  };
+  },[getToken])
 
   const addExpenses = () => {
     navigate('/expenses')
   }
+
 
   return (
     <div>
@@ -247,7 +254,7 @@ const getToken = async () => {
         <Logout />
       </div>
       <div className={`home-text ${theme}`}>
-      <h1>Welcome to the Expense Eagle, {localStorage.getItem('userName') === 'undefined' ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
+      <h1>Welcome to the Expense Eagle, {localStorage.getItem('userName') === 'undefined' || localStorage.getItem('userName') === null ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
       <p>Refresh page if profile changes are not reflecting on UI</p>
 
       
