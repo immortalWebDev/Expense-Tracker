@@ -1,62 +1,20 @@
-// import React from "react";
-// import { useNavigate } from "react-router-dom";
-// import "./Logout.css"; // Import the CSS file
-
-// const Logout = () => {
-//   const navigate = useNavigate();
-
-  
-
-//   return (
-//     <button className="logout-button" onClick={handleLogout}>
-//       Logout
-//     </button>
-//   );
-// };
-
-// export default Logout;
-
-
-
-
-
-// import React, { useContext } from "react";
-// import { AuthContext } from "./AuthContext";
-// import "./Logout.css"; // Import the CSS file
-
-// const Logout = () => {
-//   const { logout } = useContext(AuthContext);
-
-//   const handleLogout = () => {
-//     logout();
-//   };
-
-//   return (
-//     <button className="logout-button" onClick={handleLogout}>
-//       Logout
-//     </button>
-//   );
-// };
-
-// export default Logout;
-
-
-
-
-
-
-import React, { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "./Logout.css"; // Import the CSS file
+import { logout } from "../store/authSlice";
+import "./Logout.css"; 
 
 const Logout = () => {
-  const { handleLogout } = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onLogout = () => {
-    handleLogout();
+    dispatch(logout());
+    
     navigate("/signup");
+    window.location.reload();
+
+    console.log('Logged out successfully')
   };
 
   return (
