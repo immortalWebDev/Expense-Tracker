@@ -21,6 +21,7 @@ const authSlice = createSlice({
       localStorage.removeItem('userName')
       localStorage.removeItem('tokenExpiry')
       localStorage.removeItem('refreshToken')
+      localStorage.removeItem('theme')
 
     },
     setIsAuthenticated: (state, action) => {
@@ -29,5 +30,6 @@ const authSlice = createSlice({
   },
 });
 
+// console.log(authSlice.actions.login.type)
 export const { login, logout, setIsAuthenticated } = authSlice.actions;
 export default authSlice.reducer;
