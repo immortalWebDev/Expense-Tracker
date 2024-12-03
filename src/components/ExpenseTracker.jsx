@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import "jspdf-autotable"; // Importing the plugin
 import { useTheme } from '../store/ThemeContext';
-
-
 import "./ExpenseTracker.css";
 import Logout from "./Logout";
 
@@ -21,23 +19,24 @@ import {
 } from "../selectors/expensesSelectors";
 
 const ExpenseTracker = () => {
-  const { theme } = useTheme();
+  const { theme} = useTheme();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const expenses = useSelector(selectExpenses);
   const totalAmount = useSelector(selectTotalAmount);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+  
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingExpenses, setLoadingExpenses] = useState(true); 
-
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [currentExpenseId, setCurrentExpenseId] = useState(null);
+  const [isPremiumActivated, setIsPremiumActivated] = useState(false); 
+
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -55,9 +54,11 @@ const ExpenseTracker = () => {
     setIsLoading(true);
 
     const newExpense = { amount, description, category };
+    // console.log(newExpense)
 
     try {
       if (editMode && currentExpenseId) {
+        // console.log(editMode,currentExpenseId)
         dispatch(editExpense({ id: currentExpenseId, ...newExpense }));
 
         setEditMode(false);
@@ -78,17 +79,22 @@ const ExpenseTracker = () => {
     } finally {
       setIsLoading(false);
     }
+
+    console.log(editMode ? 'Edited expense successfully' : 'Added expense successfully');
+
   };
 
   const handleDelete = async (id) => {
     try {
       dispatch(deleteExpense(id));
+      console.log('Deleted expense successfully')
     } catch (error) {
       console.error("Error deleting expense:", error);
     }
   };
 
   const handleEdit = (expense) => {
+    // console.log(expense)
     setAmount(expense.amount);
     setDescription(expense.description);
     setCategory(expense.category);
@@ -126,22 +132,27 @@ const ExpenseTracker = () => {
       body: expenseData,
     };
 
-    doc.text("Expense Report", 14, 15);
+
+    doc.text(`Expense Report of ${localStorage.getItem('userName')}` , 14, 15);
     doc.autoTable(content);
+
+    // console.log(doc)
 
     // Convert the PDF to Blob
     const pdfBlob = doc.output("blob");
+    // console.log(pdfBlob) //pdf as binary data stream
 
     // Create a link element
     const link = document.createElement("a");
     link.href = URL.createObjectURL(pdfBlob);
-    link.download = "expense-report.pdf";
+    link.download = `expense-report-${localStorage.getItem('userName')}.pdf`;
 
     // Append the link to the body
     document.body.appendChild(link);
 
     //Trigger the click method upon link
     link.click();
+    console.log(`Downloading PDF for ${localStorage.getItem('userName')}...`)
 
     // Remove the link from the document
     document.body.removeChild(link);
@@ -196,7 +207,7 @@ const ExpenseTracker = () => {
               Try our premium feature and get extra perks. Download the PDF of
               your expenses free!
             </p>
-            <button className="premium-button">Go Premium</button>
+            <button className="premium-button" onClick={() => setIsPremiumActivated(true)}>Go Premium</button>
           </div>
         )}
         <div className={`footer ${theme}`}>
@@ -213,6 +224,7 @@ const ExpenseTracker = () => {
           <p>No expenses added yet.</p>
         ) : (
           <ul className="expense-list">
+            {/* {console.log('from state',expenses)} */}
             {expenses.map((expense) => (
               <li key={expense.id} className={`expense-item ${theme}`}>
                 <p className={`expense-description ${theme}`}>{expense.description}</p>
@@ -236,7 +248,7 @@ const ExpenseTracker = () => {
             ))}
           </ul>
         )}
-        {totalAmount >= 10000 && (
+        {isPremiumActivated && (
           <div className="download-pdf-button">
             <button className="pdf" onClick={handleDownloadPDF}>Download PDF</button>
           </div>
