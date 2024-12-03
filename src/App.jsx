@@ -6,6 +6,7 @@ import { setIsAuthenticated } from "./store/authSlice";
 import { ThemeProvider, useTheme } from "./store/ThemeContext";
 import ThemeToggle from "./components/ThemeToggle";
 import Routes from './Routes'
+import { fetchExpenses } from "./store/expensesSlice";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,13 @@ const App = () => {
     const token = localStorage.getItem('token');
     dispatch(setIsAuthenticated(!!token)); // Double negation
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchExpenses()); //to persist amount state, (to maintain toggle btn)
+  },[])
+  
+
+  
 
   return (
     <div className={`App ${theme}`}>
@@ -37,7 +45,7 @@ const App = () => {
                 <a href="#about">About Us</a>
               </li>
               <li>
-                {totalAmount >= 10000 && (
+                {isAuthenticated && totalAmount >= 10000 && (
                   <ul>
                     <ThemeToggle />
                   </ul>
