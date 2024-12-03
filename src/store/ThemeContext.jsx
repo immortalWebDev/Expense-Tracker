@@ -11,14 +11,16 @@ export const ThemeProvider = ({ children }) => {
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
-    // setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
     setTheme(newTheme)
     localStorage.setItem('theme',newTheme)
   };
-
-  //Bottom root strip bg made dynamic
+ 
+  // Bottom root strip bg made dynamic (so that theme applied globally)
   useEffect(() => {
-    document.getElementById('root').className = theme;
+    const rootElement = document.getElementById('root');
+    if (rootElement) {
+      rootElement.className = theme;
+    }
   }, [theme]);
 
   return (
