@@ -13,18 +13,15 @@ import {
   editExpense,
   deleteExpense,
 } from "../store/expensesSlice";
-import {
-  selectExpenses,
-  selectTotalAmount,
-} from "../selectors/expensesSelectors";
+
 
 const ExpenseTracker = () => {
   const { theme} = useTheme();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const expenses = useSelector(selectExpenses);
-  const totalAmount = useSelector(selectTotalAmount);
+  const expenses = useSelector(state => state.expenses.items); 
+  const totalAmount = useSelector(state => state.expenses.totalAmount); 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   
   const [amount, setAmount] = useState("");

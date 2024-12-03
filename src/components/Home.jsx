@@ -60,7 +60,7 @@ const getFreshToken = async () => {
   }
 
   const response = await axios.post(
-    `https://securetoken.googleapis.com/v1/token?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+    `${import.meta.env.VITE_FB_NEW_TOKEN}${import.meta.env.VITE_FB_API}`,
     {
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
@@ -105,7 +105,7 @@ const formattedEmail = useMemo(() => {
 
         
         const response = await axios.post(
-          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+          `${import.meta.env.VITE_FB_PROFILE_LOOKUP}${import.meta.env.VITE_FB_API}`,
           { idToken: idToken }
         );
         const userData = response.data.users[0];
@@ -122,7 +122,7 @@ const formattedEmail = useMemo(() => {
         //  const userEmail = localStorage.getItem('userEmail')
         //  const formattedEmail = userEmail.replaceAll('.','')
          const profileResponse = await axios.get(
-           `https://expense-eagle-piyush-default-rtdb.firebaseio.com/users/${formattedEmail}/${userId}.json`
+           `${import.meta.env.VITE_FB_RTDB_BASE_URL}users/${formattedEmail}/${userId}.json`
          );
 
         //  console.log(profileResponse)
@@ -167,7 +167,7 @@ const formattedEmail = useMemo(() => {
       // const idToken = localStorage.getItem("token");
       const idToken = await getToken();
       const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+        `${import.meta.env.VITE_FB_PROFILE_UPDATE}${import.meta.env.VITE_FB_API}`,
         {
           idToken: idToken,
           displayName: name,
@@ -181,7 +181,7 @@ const formattedEmail = useMemo(() => {
       // const userEmail = localStorage.getItem('userEmail')
       // const formattedEmail = userEmail.replaceAll('.','')
       await axios.put(
-        `https://expense-eagle-piyush-default-rtdb.firebaseio.com/users/${formattedEmail}/${userId}.json`,
+        `${import.meta.env.VITE_FB_RTDB_BASE_URL}users/${formattedEmail}/${userId}.json`,
         {
           job: job,
           location: location,
@@ -224,7 +224,7 @@ const formattedEmail = useMemo(() => {
 
       // const idToken = localStorage.getItem("token");
       const response = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDxRZQnGCbIbLdX0T-hMudwZE9GiRmWIIw`,
+        `${import.meta.env.VITE_FB_VERIFY_EMAIL}${import.meta.env.VITE_FB_API}`,
         {
           requestType: "VERIFY_EMAIL",
           idToken: idToken,
