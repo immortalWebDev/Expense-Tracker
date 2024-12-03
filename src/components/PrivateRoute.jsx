@@ -1,10 +1,9 @@
-// components/PrivateRoute.js
-import React, { useContext } from 'react';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
 
 const PrivateRoute = ({ element: Component }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return isAuthenticated ? <Component /> : <Navigate to="/signup" />;
 };
