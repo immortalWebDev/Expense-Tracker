@@ -257,7 +257,7 @@ const formattedEmail = useMemo(() => {
       <div className="button-container">      
       </div>
       <div className={`home-text ${theme}`}>
-      <h1>Welcome to the ExpenseEagle, {localStorage.getItem('userName') === 'undefined' || localStorage.getItem('userName') === null ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
+      <h1>Welcome to the <span className="welcome-logo-name">ExpenseEagle</span>, {localStorage.getItem('userName') === 'undefined' || localStorage.getItem('userName') === null ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
       <p>You have successfully logged in:    <button className="profile-button" onClick={() => setShowViewProfileModal(true)}>
           Your Profile
         </button></p>

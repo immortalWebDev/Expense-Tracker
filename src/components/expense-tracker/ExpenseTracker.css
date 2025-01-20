@@ -1,6 +1,5 @@
 body {
   background-color: #f4f4f9;
-  font-family: "Arial", sans-serif;
   color: #333;
 }
 
@@ -10,6 +9,7 @@ body {
   opacity: 0.4;
   transform: rotate(90deg);
   z-index: 5;
+  object-fit: cover;
 }
 
 .section-divider {
@@ -37,7 +37,7 @@ body {
 .expense-tracker-container h2,
 .expense-tracker-container h3 {
   text-align: center;
-  font-family: "Roboto", sans-serif;
+  /* font-family: "Roboto", sans-serif; */
   margin-bottom: 20px;
 }
 
@@ -132,7 +132,7 @@ select {
 .expense-tracker-container h3 {
   text-align: center;
   color: #333;
-  font-family: "Roboto", sans-serif;
+  /* font-family: "Roboto", sans-serif; */
   margin-bottom: 20px;
 }
 

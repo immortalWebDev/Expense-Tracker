@@ -9,11 +9,14 @@
 html, body {
   height: 100vh; 
   overflow: hidden;
+  font-family: sans-serif,"poppins" !important;
+
+  
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  
 }
 
 .App-header {
@@ -119,4 +122,7 @@ main.dark {
   main{
     overflow-y: auto;
   }
+
+ 
 }
+
