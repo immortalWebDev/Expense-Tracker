@@ -62,7 +62,7 @@ const SignUp = () => {
       setConfirmPassword("");
 
       navigate("/home");
-      window.location.reload(); //to show theme button
+      // window.location.reload(); //to show theme button
 
     } catch (err) {
       setError("Authentication failed: Invalid credentials");
