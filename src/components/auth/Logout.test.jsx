@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, vi, expect } from 'vitest';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import Logout from './Logout';
-import { logout } from '../store/authSlice';
+import Logout from '../auth/Logout';
+import { logout } from '../../store/slice/authSlice';
 
 // Mock the necessary hooks and functions
 vi.mock('react-redux', () => ({

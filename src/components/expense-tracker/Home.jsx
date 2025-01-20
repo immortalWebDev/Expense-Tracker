@@ -1,13 +1,13 @@
 import React, { useState, useEffect,useCallback,useMemo } from "react";
 import axios from "axios";
-import Logout from "./Logout";
+// import Logout from "./Logout";
 import { useNavigate } from "react-router-dom";
-import ViewProfileModal from "./ViewProfileModal";
-import EditProfileModal from "./EditProfileModal";
-import { useTheme } from "../store/ThemeContext";
-import './Home.css'
+import ViewProfileModal from "../layout/ViewProfileModal";
+import EditProfileModal from "../layout/EditProfileModal";
+import { useTheme } from "../misc/ThemeContext";
 import { useDispatch } from "react-redux";
-import { logout } from "../store/authSlice";
+import { logout } from "../../store/slice/authSlice";
+import './Home.css'
 // import { selectTotalAmount } from "../selectors/expensesSelectors";
 
 

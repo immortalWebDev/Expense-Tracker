@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { login } from "../store/authSlice";
-import { useTheme } from "../store/ThemeContext";
+import { login } from "../../store/slice/authSlice";
+import { useTheme } from "../misc/ThemeContext";
 import "./SignUp.css";
 
 const SignUp = () => {

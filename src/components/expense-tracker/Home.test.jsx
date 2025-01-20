@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent ,waitFor} from '@testing-library/react';
-import Home from './Home';
-import { ThemeProvider } from '../store/ThemeContext';
+import Home from '../expense-tracker/Home';
+import { ThemeProvider } from '../misc/ThemeContext';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { store } from '../../store/store';
 import { expect,vi } from 'vitest';
 import axios from 'axios';
 // import { mockAxios } from 'vitest';

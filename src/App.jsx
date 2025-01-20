@@ -2,12 +2,12 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, NavLink } from "react-router-dom";
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsAuthenticated } from "./store/authSlice";
-import { ThemeProvider, useTheme } from "./store/ThemeContext";
+import { setIsAuthenticated } from "./store/slice/authSlice";
+import { ThemeProvider, useTheme } from "./components/misc/ThemeContext";
 // import ThemeToggle from "./components/ThemeToggle";
-import Routes from './Routes'
+import Routes from "./components/misc/Routes"
 // import { fetchExpenses } from "./store/expensesSlice";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/layout/Navbar"
 // import Footer from "./components/Footer";
 
 const App = () => {

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
-import "jspdf-autotable"; // Importing the plugin
-import { useTheme } from '../store/ThemeContext';
+import "jspdf-autotable"; 
+import { useTheme } from '../misc/ThemeContext';
 import "./ExpenseTracker.css";
 
 import {
@@ -11,7 +11,7 @@ import {
   addExpense,
   editExpense,
   deleteExpense,
-} from "../store/expensesSlice";
+} from "../../store/slice/expensesSlice";
 
 
 const ExpenseTracker = () => {

@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SignUp from "./SignUp";
+import SignUp from "../auth/SignUp";
 import axios from "axios";
 import { vi } from "vitest";
 
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "../store/ThemeContext";
-import { store } from "../store/store";
+import { ThemeProvider } from "../misc/ThemeContext";
+import { store } from "../../store/store";
 
 // Mocking axios globally using vitest
 vi.mock("axios");

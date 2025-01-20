@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen ,waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ExpenseTracker from './ExpenseTracker';
-import { ThemeProvider } from '../store/ThemeContext'; 
+import ExpenseTracker from '../expense-tracker/ExpenseTracker';
+import { ThemeProvider } from '../misc/ThemeContext'; 
 import { Provider } from 'react-redux';
-import { store } from '../store/store';
+import { store } from '../../store/store';
 import { BrowserRouter } from 'react-router-dom';
 
 

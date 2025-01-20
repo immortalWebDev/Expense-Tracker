@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignUp from "./components/SignUp";
-import Home from "./components/Home";
-import ExpenseTracker from "./components/ExpenseTracker";
+import SignUp from "../auth/SignUp";
+import Home from "../expense-tracker/Home";
+import ExpenseTracker from "../expense-tracker/ExpenseTracker";
 import { useSelector } from "react-redux";
 
 const AppRoutes = () => {
