@@ -5,7 +5,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable"; // Importing the plugin
 import { useTheme } from '../store/ThemeContext';
 import "./ExpenseTracker.css";
-import Logout from "./Logout";
 
 import {
   fetchExpenses,
@@ -21,6 +20,7 @@ const ExpenseTracker = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const expenses = useSelector(state => state.expenses.items); 
+  
   const totalAmount = useSelector(state => state.expenses.totalAmount); 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   
@@ -131,7 +131,29 @@ const ExpenseTracker = () => {
 
 
     doc.text(`Expense Report of ${localStorage.getItem('userName')}` , 14, 15);
+    
     doc.autoTable(content);
+
+
+  // Add date and time below the table
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+  const formattedTime = currentDate.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+
+  const dateTimeText = `Report generated on: ${formattedDate} (${formattedTime})`;
+
+  // Position below the table
+  const tableEndY = doc.lastAutoTable.finalY; // Get the last table's Y position
+  doc.text(dateTimeText, 14, tableEndY + 10);
+
 
     // console.log(doc)
 
@@ -157,8 +179,15 @@ const ExpenseTracker = () => {
 
 
   return (
+    <>
+   <span className="filler-image">
+    <img src="src\assets\wave-filler.png" alt="" />
+
+   </span>
+
+
     <div className={`expense-tracker-container ${theme}`}>
-      <Logout />
+      
       <div className="form-container">
         <h2>{editMode ? "Edit Expense" : "Add Your Expense"}</h2>
         <form className="expense-form" onSubmit={handleSubmit}>
@@ -201,7 +230,7 @@ const ExpenseTracker = () => {
         {totalAmount >= 10000 && (
           <div className={`premium-info ${theme}`}>
             <p>
-              Try our premium feature and get extra perks. Download the PDF of
+              Try our advance feature and get extra perks. Download the PDF of
               your expenses free!
             </p>
             <button className="premium-button" onClick={() => setIsPremiumActivated(true)}>Go Premium</button>
@@ -209,9 +238,10 @@ const ExpenseTracker = () => {
         )}
         <div className={`footer ${theme}`}>
           <p>Copyrights @ExpenseEagle!</p>
-          <p>By Piyush Badgujar</p>
+          <p>Made with 💝 by <a href="https://web-portfolio-piyush.vercel.app/" target="_blank">Piyush</a></p>
         </div>
       </div>
+      <hr className="section-divider"/>
       <div className={`expenses-container ${theme}`}>
         <h3>All Expenses</h3>
         <p>Total Amount: ${totalAmount}</p>
@@ -222,7 +252,7 @@ const ExpenseTracker = () => {
         ) : (
           <ul className="expense-list">
             {/* {console.log('from state',expenses)} */}
-            {expenses.map((expense) => (
+            {[...expenses].reverse().map((expense) => (
               <li key={expense.id} className={`expense-item ${theme}`}>
                 <p className={`expense-description ${theme}`}>{expense.description}</p>
                 <p className={`expense-amount ${theme}`}>${expense.amount}</p>
@@ -252,7 +282,9 @@ const ExpenseTracker = () => {
         )}
       </div>
     </div>
+    </>
   );
+  
 };
 
 export default ExpenseTracker;
