@@ -70,7 +70,7 @@ main {
   align-items: center;
   height: calc(100vh);
   transition: background-color 0.3s ease, color 0.3s ease;
-  background-image: url('assets/blue-blank-notepad-with-copy-space.jpg'); 
+  background-image: url('https://cdn.jsdelivr.net/gh/immortalWebDev/my-cdn@1e01b30a4644e0e404d8df0590c48a1aa83912ff/expense-tracker/expense-eagle-bg.webp'); 
   background-size: cover;
   /* background-position: center; */
   /* background-attachment: fixed; */
@@ -80,6 +80,7 @@ main {
   /* padding: 0; */
   /* height: 100%; */
   /* overflow-x: hidden; */
+  background-color: #A3D4E0 !important;
   overflow: hidden;
   z-index: 1;
   
