@@ -181,7 +181,7 @@ const ExpenseTracker = () => {
   return (
     <>
    <span className="filler-image">
-    <img src="https://cdn.jsdelivr.net/gh/immortalWebDev/my-cdn@1e01b30a4644e0e404d8df0590c48a1aa83912ff/expense-tracker/wave-filler.webp" alt="wave" />
+    <img src="https://cdn.jsdelivr.net/gh/immortalWebDev/my-cdn@1e01b30a4644e0e404d8df0590c48a1aa83912ff/expense-tracker/wave-filler.webp" alt="wave" style={{width:"100vh"}} />
 
    </span>
 

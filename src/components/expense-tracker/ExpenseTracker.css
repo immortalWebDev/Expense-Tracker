@@ -9,7 +9,8 @@ body {
   opacity: 0.4;
   transform: rotate(90deg);
   z-index: 5;
-  object-fit: cover;
+  /* object-fit: cover; */
+  /* width: 100vh !important; */
 }
 
 .section-divider {
@@ -107,6 +108,7 @@ select {
     margin: 5px 0;
     padding: 10px;
     border-left: none;
+    margin-bottom: 0.6rem;
   }
 
   .expenses-container {
@@ -407,6 +409,7 @@ button.delete-button:hover {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
+  
   }
 
   .form-container,
@@ -426,3 +429,11 @@ button.delete-button:hover {
     padding: 10px;
   }
 }
+
+
+/* @media(max-width:375px), (max-height:667px){
+  .expense-tracker-container.light {
+    max-height: 75vh;
+  }
+
+} */

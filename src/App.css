@@ -48,6 +48,10 @@ body {
   margin-right: 20px;
 }
 
+/* .filler-image{
+  width: 100vh !important;
+} */
+
 ul {
   list-style-type: none;
   margin: 0;
