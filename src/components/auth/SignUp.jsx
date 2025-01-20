@@ -29,7 +29,7 @@ const SignUp = () => {
 
     setIsLoading(true);
 
-    console.log(`${import.meta.env.VITE_FB_SIGNIN}${import.meta.env.VITE_FB_API}`)
+    // console.log(`${import.meta.env.VITE_FB_SIGNIN}${import.meta.env.VITE_FB_API}`)
     
 
     let url;
@@ -48,7 +48,7 @@ const SignUp = () => {
 
       const data = response.data;
 
-      console.log("Data fetched from server upon successfull auth", data);
+      // console.log("Data fetched from server upon successfull auth", data);
 
       // Dispatch login action with user's email
       dispatch(login({ email: data.email, token: data.idToken }));

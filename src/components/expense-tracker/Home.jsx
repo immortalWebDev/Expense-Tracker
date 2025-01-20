@@ -72,7 +72,7 @@ const getFreshToken = async () => {
   const expiresIn = response.data.expires_in;
 
   localStorage.setItem('token', newIdToken);
-  console.log('Fetched new token from firebase as old token expired in 1 hour')
+  // console.log('Fetched new token from firebase as old token expired in 1 hour')
   localStorage.setItem('refreshToken', newRefreshToken);
   localStorage.setItem('tokenExpiry', Date.now() + expiresIn * 1000);
 
@@ -109,7 +109,7 @@ const formattedEmail = useMemo(() => {
           { idToken: idToken }
         );
         const userData = response.data.users[0];
-        console.log('Fetched user profile data from server',userData);
+        // console.log('Fetched user profile data from server',userData);
         
         localStorage.setItem('userName',userData.displayName)
 
@@ -188,7 +188,7 @@ const formattedEmail = useMemo(() => {
         }
       );
 
-      console.log("Profile updated successfully:", response.data);
+      // console.log("Profile updated successfully:", response.data);
 
        // Update local state with new profile details
     setName(name);
@@ -233,7 +233,7 @@ const formattedEmail = useMemo(() => {
 
       setVerificationSent(true)
       
-      console.log("Email verification link sent successfully:", response.data);
+      console.log("Email verification link sent successfully:");
     } catch (error) {
       console.error("Error sending email verification link:", error);
       setVerificationSent(false); 
