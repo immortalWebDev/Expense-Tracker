@@ -1,4 +1,15 @@
+* a{
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+
+html, body {
+  height: 100vh; 
+  overflow: hidden;
+}
 
 body {
   margin: 0;
@@ -6,30 +17,25 @@ body {
 }
 
 .App-header {
+  position: relative;
   padding: 10px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px solid rgba(113, 113, 190, 0.589);
+  z-index: 10;
 }
 
 .App-header.light {
-  background-color: hwb(200 96% 15%);
+  background-color: #008cf154;
   color: #000;
+  backdrop-filter: blur(5px);
+
+
 }
 
 .App-header.dark {
   background-color: #333;
   color: #fff;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar-left {
-  display: flex;
-  align-items: center;
 }
 
 .logo {
@@ -46,9 +52,7 @@ ul {
   display: flex;
 }
 
-ul li {
-  margin-left: 20px;
-}
+
 
 ul li a {
   text-decoration: none;
@@ -64,8 +68,23 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 60px);
+  height: calc(100vh);
   transition: background-color 0.3s ease, color 0.3s ease;
+  background-image: url('assets/blue-blank-notepad-with-copy-space.jpg'); 
+  background-size: cover;
+  /* background-position: center; */
+  /* background-attachment: fixed; */
+  /* min-height: 100vh; */
+  /* max-height: 100vh; */
+  /* margin: 0; */
+  /* padding: 0; */
+  /* height: 100%; */
+  /* overflow-x: hidden; */
+  overflow: hidden;
+  z-index: 1;
+  
+ 
+
 }
 
 main.light {
@@ -86,11 +105,17 @@ main.dark {
 
 
 
-/* App.css */
+/* 
 #root.light {
   background-color: hwb(150 96% 8%);
 }
 
 #root.dark {
   background-color: #2c2c2c;
+} */
+
+@media(max-width:670px){
+  main{
+    overflow-y: auto;
+  }
 }

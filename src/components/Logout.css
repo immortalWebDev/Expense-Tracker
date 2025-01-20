@@ -3,7 +3,7 @@
     top: 10px;
     right: 30px;
     padding: 10px 20px;
-    background-color: #2693db;
+    background-color: #db2626a6;
     color: white;
     border: none;
     cursor: pointer;
@@ -11,6 +11,6 @@
   }
   
   .logout-button:hover {
-    background-color: #0084b8;
+    background-color: #db0808;
   }
   

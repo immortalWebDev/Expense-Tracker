@@ -1,5 +1,25 @@
-.profile-button {
+.home-container {
+  border: 1px solid #0084b8;
+  font-family: cursive;
+  border-radius: 20px;
+  padding: 20px;
+  background-color: rgba(135, 206, 235, 0.5);
+  border-color: #0084b8;
+  backdrop-filter: blur(2px);
+
+  z-index: 10;
+}
+
+.filler-image {
   position: absolute;
+  left: -15rem;
+  opacity: 0.4;
+  transform: rotate(90deg);
+  z-index: 2;
+}
+
+.profile-button {
+  display: inline-block;
   top: 10px;
   right: 120px;
   padding: 10px 10px;
@@ -56,7 +76,7 @@ button {
   display: inline-block;
   margin-left: 10px;
   padding: 5px 10px;
-  background-color: #ffc107;
+  background-color: #ffc10793;
   color: black;
   border: none;
   cursor: pointer;
@@ -64,20 +84,83 @@ button {
   font-size: 14px;
 }
 
+.verified-green {
+  color: #218838;
+  font-weight: 600;
+}
+
 .verify-email-button:hover {
   background-color: #e0a800;
 }
 
-
-
 .home-text.light h1,
-.home-text.light p{
+.home-text.light p {
   color: #333;
 }
 
 .home-text.dark h1,
-.home-text.dark p{
-  
+.home-text.dark p {
   color: #fff;
-  
+}
+
+@media (max-width: 670px) {
+  .home-container {
+    margin: 1rem;
+  }
+
+  .profile-button {
+    right: 50px;
+  }
+
+  .button-container {
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+  .add-expenses {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .verify-email-button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 370px) {
+  .profile-button {
+    top: 5px;
+    right: 20px;
+    padding: 8px 8px;
+  }
+
+  .button-container {
+    justify-content: center;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  p {
+    font-size: 12px;
+  }
+
+  .add-expenses {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .verify-email-button {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
 }
