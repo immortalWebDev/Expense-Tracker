@@ -246,26 +246,31 @@ const formattedEmail = useMemo(() => {
 
 
   return (
-    <div>
-      <div className="button-container">
-        <button className="profile-button" onClick={() => setShowViewProfileModal(true)}>
-          Profile
-        </button>
-        <Logout />
+    <>
+
+    <span className="filler-image">
+    <img src="src\assets\wave-filler.png" alt="" />
+
+   </span>
+
+    <div className="home-container">
+      <div className="button-container">      
       </div>
       <div className={`home-text ${theme}`}>
-      <h1>Welcome to the Expense Eagle, {localStorage.getItem('userName') === 'undefined' || localStorage.getItem('userName') === null ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
-      <p>Refresh page if profile changes are not reflecting on UI</p>
+      <h1>Welcome to the ExpenseEagle, {localStorage.getItem('userName') === 'undefined' || localStorage.getItem('userName') === null ? 'Dear user!' : `${localStorage.getItem('userName')}!`}</h1>
+      <p>You have successfully logged in:    <button className="profile-button" onClick={() => setShowViewProfileModal(true)}>
+          Your Profile
+        </button></p>
 
       
-      {<p>Logged in as: {localStorage
-      .getItem('userEmail')}</p>}
+      {<p>Logged in as: <strong>{localStorage
+      .getItem('userEmail')}</strong></p>}
       <p>
-          You have successfully logged in,{" "}
+          {!emailVerified && <span>Refresh if status is not updated,</span>}{" "}
           {loadingEmailVerification ? (
             <span>Loading...</span>
           ) : emailVerified ? (
-            <span>and your Email is verified!</span>
+            <span>Congrats your Email is <span className="verified-green">verified!</span></span>
           ) : (
             <button className="verify-email-button" onClick={handleVerifyEmail} disabled={verificationSent}>
               {verificationSent ? "Check your inbox" : "Verify Email"}
@@ -299,6 +304,7 @@ const formattedEmail = useMemo(() => {
       />
     </div>
     </div>
+    </>
   );
 }
 
