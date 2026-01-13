@@ -14,10 +14,20 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const DEMO_USER = {
+    email:"fevaleg922@feanzier.com",
+    password:"fevaleg922@feanzier.com"
+  }
+
+  function handleDemo(){
+    setEmail(DEMO_USER.email)
+    setPassword(DEMO_USER.password)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -146,6 +156,10 @@ const SignUp = () => {
                 ? "Create a new account"
                 : "Log in with existing account"}
             </button>
+            {isLogin && <button onClick={handleDemo} type="button"> 
+              Use demo credentials!
+            </button>}
+            
           </div>
         </form>
       </div>
